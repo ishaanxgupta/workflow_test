@@ -167,7 +167,7 @@ def main():
                 assignment_msg = (
                     f"Hey @{user_login}! You're assigned to [{owner}/{repo} issue #{issue_number}]"
                     f"(https://github.com/{owner}/{repo}/issues/{issue_number}). "
-                    f"Please finish your PR within 1 day."
+                    f"Please finish your PR within 2 day."
                 )
                 requests.post(
                     f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/comments",
@@ -204,9 +204,9 @@ def main():
                 updated_at = datetime.strptime(issue_data.get("updated_at"), "%Y-%m-%dT%H:%M:%SZ")
                 days_since_update = (current_time - updated_at).total_seconds() / (86400)  # seconds in a day
 
-                if days_since_update > 1:
+                if days_since_update > 2:
                     issue_number = issue_data.get("number")
-                    print(f"Revoking assignment of issue #{issue_number} due to 1 day of inactivity")
+                    print(f"Revoking assignment of issue #{issue_number} due to 2 day of inactivity")
 
                     # Check if issue has "assigned" label
                     has_assigned_label = any(label.get("name") == "assigned" for label in issue_data.get("labels", []))
