@@ -136,10 +136,11 @@ def main():
 
                     # Search for PRs referencing this issue
                     search_url = "https://api.github.com/search/issues"
-                    search_query = f"type:pr state:open repo:{owner}/{repo} " f"{assigned_issue.get('number')} in:body"
+                    search_query = f"type:pr state:open repo:{owner}/{repo} {assigned_issue.get('number')} in:body"
                     search_params = {"q": search_query}
                     search_response = requests.get(search_url, headers=headers, params=search_params)
                     search_data = search_response.json()
+                    print(f"Search API Response for issue #{assigned_issue['number']}: {search_data}")
 
                     if search_data.get("total_count", 0) == 0:
                         print(f"Issue #{assigned_issue.get('number')} lacks an open PR")
