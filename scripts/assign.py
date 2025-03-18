@@ -153,6 +153,7 @@ def main():
                         f"You can't take this task yet. You still have uncompleted issues: "
                         f"#{issues_list}. Please complete them before requesting another."
                     )
+                    issue_url = f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}"
                     requests.post(f"{issue_url}/comments", headers=headers, json={"body": comment_body})
                     return
 
