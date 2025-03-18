@@ -156,7 +156,21 @@ def main():
                     issue_url = f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}"
                     requests.post(f"{issue_url}/comments", headers=headers, json={"body": comment_body})
                     return
-
+                
+                issue_url = f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}"
+                issue_response = requests.get(issue_url, headers=headers)
+                issue_data = issue_response.json()
+                current_assignees = issue_data.get("assignees", [])
+                if len(current_assignees) >= 2:
+                    # Issue already has two contributors
+                    comment_body = (
+                        f"Sorry, this issue already has two contributors: "
+                        f"{', '.join([a['login'] for a in current_assignees])}. "
+                        f"Please check other available issues."
+                    )
+                    requests.post(f"{issue_url}/comments", headers=headers, json={"body": comment_body})
+                    return
+            
                 # Assign the issue
                 assignees_url = f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/assignees"
                 requests.post(assignees_url, headers=headers, json={"assignees": [user_login]})
