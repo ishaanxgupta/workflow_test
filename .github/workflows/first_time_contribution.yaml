@@ -21,7 +21,13 @@ jobs:
         run: pip install requests
 
       - name: Debug Token
-        run: echo "Token is set: ${{ secrets.PAT_TOKEN != '' }}"
+        run: |
+          if [[ -n "${{ secrets.PAT_TOKEN }}" ]]; then
+            echo "✅ PAT_TOKEN is set."
+          else
+            echo "❌ PAT_TOKEN is NOT set! Check your repository secrets."
+            exit 1
+          fi
         
       - name: Run the First-Time Contributor Bot
         env:
