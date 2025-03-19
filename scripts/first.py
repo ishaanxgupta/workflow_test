@@ -56,7 +56,4 @@ if __name__ == "__main__":
     pr_details = get_pr_details()
     if pr_details:
         username = pr_details["user"]["login"]
-        if is_first_time_contributor(username):
-            post_comment(username)
-        else:
-            print(f"🔹 @{username} is not a first-time contributor. No message posted.")
+        post_comment(username)
