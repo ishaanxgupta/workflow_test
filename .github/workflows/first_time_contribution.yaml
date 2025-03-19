@@ -21,7 +21,7 @@ jobs:
 
       - name: Run the First-Time Contributor Bot
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN}}
           REPO_NAME: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: python scripts/first.py
