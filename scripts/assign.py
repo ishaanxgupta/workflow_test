@@ -142,9 +142,19 @@ def main():
                     search_data = search_response.json()
                     print(f"Search API Response for issue #{assigned_issue['number']}: {search_data}")
 
-                    if search_data.get("total_count", 0) == 0:
-                        print(f"Issue #{assigned_issue.get('number')} lacks an open PR")
-                        issues_without_prs.append(assigned_issue.get("number"))
+                    if search_data.get("total_count", 0) > 0:
+                        # print(f"Issue #{assigned_issue.get('number')} lacks an open PR")
+                        # issues_without_prs.append(assigned_issue.get("number"))
+                        pr_number = search_data["items"][0]["number"]
+                        pr_merge_url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/merge"
+                        merge_response = requests.get(pr_merge_url, headers=headers)
+
+                        if merge_response.status_code == 204:
+                            print(f"PR #{pr_number} is merged for issue #{assigned_issue['number']}.")
+                            continue 
+
+                    print(f"Issue #{assigned_issue.get('number')} has no merged PR")
+                    issues_without_prs.append(assigned_issue.get("number"))
 
                 if issues_without_prs:
                     # User has uncompleted issues
