@@ -11,6 +11,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+
       - name: Set Up Python
         uses: actions/setup-python@v4
         with:
@@ -19,9 +20,12 @@ jobs:
       - name: Install Dependencies
         run: pip install requests
 
+      - name: Debug Token
+        run: echo "Token is set: ${{ secrets.PAT_TOKEN != '' }}"
+        
       - name: Run the First-Time Contributor Bot
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           REPO_NAME: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: python scripts/first.py

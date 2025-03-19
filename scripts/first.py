@@ -6,6 +6,11 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 REPO_NAME = os.getenv("REPO_NAME")  # Format: owner/repo
 PR_NUMBER = os.getenv("PR_NUMBER")
 
+# Debugging (print env variables)
+print(f"GITHUB_TOKEN: {'SET' if GITHUB_TOKEN else 'NOT SET'}")
+print(f"REPO_NAME: {REPO_NAME}")
+print(f"PR_NUMBER: {PR_NUMBER}")
+
  # Set up GitHub API headers
 headers = {"Authorization": f"token {GITHUB_TOKEN}", "Accept": "application/vnd.github.v3+json"}
 
@@ -19,6 +24,7 @@ Happy Coding! 💻✨
 
 def get_pr_details():
     """Fetch PR details to get contributor's username"""
+    print("hello from get_pr")
     url = f"https://api.github.com/repos/{REPO_NAME}/pulls/{PR_NUMBER}"
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
@@ -26,6 +32,7 @@ def get_pr_details():
     return None
 
 def is_first_time_contributor(username):
+    print("hello from is_first_time_contributor")
     """Check if the user has any previous commits in the repository"""
     url = f"https://api.github.com/repos/{REPO_NAME}/commits?author={username}"
     response = requests.get(url, headers=headers)
