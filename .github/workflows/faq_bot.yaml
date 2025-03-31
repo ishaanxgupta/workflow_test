@@ -1,0 +1,36 @@
+name: FAQ Bot
+
+on:
+  discussion_comment:
+    types: [created]
+
+jobs:
+  faq-reply:
+    runs-on: ubuntu-latest
+    permissions:
+      discussions: write
+
+    steps:
+      - name: Check for FAQ Keywords
+        run: |
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          DISCUSSION_NUMBER="${{ github.event.discussion.number }}"
+          REPO="${{ github.repository }}"
+
+          RESPONSE=""
+
+          # Define FAQ keywords and responses
+          if echo "$COMMENT_BODY" | grep -iq "how to contribute"; then
+            RESPONSE="🚀 To contribute, check our [Contributing Guide](https://github.com/YOUR_REPO/blob/main/CONTRIBUTING.md)."
+          elif echo "$COMMENT_BODY" | grep -iq "setup project"; then
+            RESPONSE="📌 To set up the project, follow our [Installation Guide](https://github.com/YOUR_REPO/blob/main/README.md)."
+          elif echo "$COMMENT_BODY" | grep -iq "what is the roadmap"; then
+            RESPONSE="🛤️ You can find our roadmap [here](https://github.com/YOUR_REPO/blob/main/ROADMAP.md)."
+          fi
+
+          # Post a comment if a response was found
+          if [[ ! -z "$RESPONSE" ]]; then
+            gh discussion comment create $DISCUSSION_NUMBER --repo $REPO --body "$RESPONSE"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
