@@ -11,15 +11,14 @@ jobs:
       discussions: write
 
     steps:
-      - name: Check for FAQ Keywords
+      - name: Check for FAQ Keywords and Respond
         run: |
           COMMENT_BODY="${{ github.event.comment.body }}"
-          DISCUSSION_NUMBER="${{ github.event.discussion.number }}"
+          DISCUSSION_ID="${{ github.event.discussion.node_id }}"
           REPO="${{ github.repository }}"
-
           RESPONSE=""
 
-          # Define FAQ keywords and responses
+          # Define FAQ responses
           if echo "$COMMENT_BODY" | grep -iq "how to contribute"; then
             RESPONSE="🚀 To contribute, check our [Contributing Guide](https://github.com/YOUR_REPO/blob/main/CONTRIBUTING.md)."
           elif echo "$COMMENT_BODY" | grep -iq "setup project"; then
@@ -28,9 +27,11 @@ jobs:
             RESPONSE="🛤️ You can find our roadmap [here](https://github.com/YOUR_REPO/blob/main/ROADMAP.md)."
           fi
 
-          # Post a comment if a response was found
+          # Post a comment via GitHub API
           if [[ ! -z "$RESPONSE" ]]; then
-            gh discussion comment create $DISCUSSION_NUMBER --repo $REPO --body "$RESPONSE"
+            curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 -H "Content-Type: application/json" \
+                 --data "{\"body\": \"$RESPONSE\"}" \
+                 "https://api.github.com/repos/$REPO/discussions/$DISCUSSION_ID/comments"
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
