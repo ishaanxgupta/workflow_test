@@ -15,7 +15,6 @@ jobs:
         run: |
           COMMENT_BODY="${{ github.event.comment.body }}"
           DISCUSSION_ID="${{ github.event.discussion.node_id }}"
-          REPO="${{ github.repository }}"
           RESPONSE=""
 
           # Define FAQ responses
@@ -27,11 +26,11 @@ jobs:
             RESPONSE="🛤️ You can find our roadmap [here](https://github.com/YOUR_REPO/blob/main/ROADMAP.md)."
           fi
 
-          # Post a comment via GitHub API
+          # Post a comment via GraphQL API
           if [[ ! -z "$RESPONSE" ]]; then
             curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                  -H "Accept: application/vnd.github.v3+json" \
                  -H "Content-Type: application/json" \
-                 --data "{\"body\": \"$RESPONSE\"}" \
-                 "https://api.github.com/repos/$REPO/discussions/$DISCUSSION_ID/comments"
+                 --data '{"query": "mutation { addDiscussionComment(input: {discussionId: \"'$DISCUSSION_ID'\", body: \"'$RESPONSE'\"}) { comment { id } } }"}' \
+                 "https://api.github.com/graphql"
           fi
