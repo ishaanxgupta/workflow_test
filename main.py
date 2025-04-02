@@ -1,16 +1,17 @@
-def hello_world():
-    return "Hello, World!"
+def add_numbers(a, b):
+    sum = a + b  # ❌ Using 'sum' as a variable name (shadows built-in function)
+    return sum
 
 
-def add(a, b):
-    return a + b
+def divide(a, b):
+    return a / b  # ❌ No handling for division by zero
 
 
-def multiply(a, b):
-    return a * b
+def unused_function():  # ❌ Unused function
+    print("This function is never called")
 
 
 if __name__ == "__main__":
-    print(hello_world())
-    print("Addition of 2 and 3:", add(2, 3))
-    print("Multiplication of 4 and 5:", multiply(4, 5))
+    print(add_numbers(5, "10"))  # ❌ Type error: adding int and string
+    print(divide(10, 0))  # ❌ Division by zero error
+
