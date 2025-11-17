@@ -1,0 +1,42 @@
+name: Welcome New Contributors
+
+on:
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if user is a first-time contributor
+        id: first-time
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: contributions } = await github.rest.repos.listContributors({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const isFirstTime = !contributions.some(contributor => contributor.login === context.payload.pull_request.user.login);
+
+            core.setOutput('first_time', isFirstTime);
+
+      - name: Welcome new contributor
+        if: steps.first-time.outputs.first_time == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `🎉 Welcome @${context.payload.pull_request.user.login} to our project! Thank you for your contribution. We're excited to have you here. 🚀`
+            });
